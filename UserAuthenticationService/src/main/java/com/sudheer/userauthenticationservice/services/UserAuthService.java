@@ -153,7 +153,7 @@ public class UserAuthService implements iUserAuthService{
         try{
             EmailDto emailDto = new EmailDto();
 
-            emailDto.setFrom("anuragbatch@gmail.com");
+            emailDto.setFrom("example@gmail.com");
             emailDto.setTo(userName);
             emailDto.setSubject("Sign up successful");
             emailDto.setBody("Thanks for signing up for Sudheer's E commerce site");
