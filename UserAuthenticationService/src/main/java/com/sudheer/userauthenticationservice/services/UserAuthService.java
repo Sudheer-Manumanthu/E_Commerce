@@ -1,5 +1,9 @@
 package com.sudheer.userauthenticationservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sudheer.userauthenticationservice.clients.KafkaClient;
+import com.sudheer.userauthenticationservice.dtos.EmailDto;
 import com.sudheer.userauthenticationservice.exceptions.*;
 import com.sudheer.userauthenticationservice.exceptions.UserAlreadyExistsException;
 import com.sudheer.userauthenticationservice.models.Role;
@@ -43,6 +47,11 @@ public class UserAuthService implements iUserAuthService{
 
     @Autowired
     RoleRepository roleRepository;
+
+    @Autowired
+    ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private KafkaClient kafkaClient;
 
     @Override
     public Pair<User, MultiValueMap<String, String>> login(String username, String password) throws InvalidCredentialsException {
@@ -140,6 +149,21 @@ public class UserAuthService implements iUserAuthService{
         }
 
         user.setRoles(roles);
+
+        try{
+            EmailDto emailDto = new EmailDto();
+
+            emailDto.setFrom("anuragbatch@gmail.com");
+            emailDto.setTo(userName);
+            emailDto.setSubject("Sign up successful");
+            emailDto.setBody("Thanks for signing up for Sudheer's E commerce site");
+            String topic = "SignUp";
+            String msg = objectMapper.writeValueAsString(emailDto);
+            kafkaClient.sendMessage(topic, msg);
+        }catch (JsonProcessingException exception){
+            throw new RuntimeException(exception.getMessage());
+        }
+
         return userRepository.save(user);
     }
 

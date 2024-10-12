@@ -1,5 +1,6 @@
 package com.sudheer.userauthenticationservice.services;
 
+import com.sudheer.userauthenticationservice.clients.KafkaClient;
 import com.sudheer.userauthenticationservice.exceptions.UserDoesNotExistsException;
 import com.sudheer.userauthenticationservice.models.User;
 import com.sudheer.userauthenticationservice.repositories.UserRepository;
@@ -16,7 +17,6 @@ public class UserService implements iUserService {
 
     @Autowired
     UserRepository userRepository;
-
 
     @Override
     public User getUserById(Long id) throws UserDoesNotExistsException {
